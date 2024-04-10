@@ -209,6 +209,7 @@ function AuctionList(){
                     <thead>
                     <tr>
                         <th align="center">Date</th>
+                        <th align="center">Time</th>
                         <th align="center">Status</th>
                         <th align="left">Address</th>
                         <th align="left">City</th>
@@ -221,6 +222,7 @@ function AuctionList(){
                         auctionList.map((item, index) => (
                             <tr key={index}>
                                 <td align="center" valign="middle">{item.dtAuctionStr} </td>
+                                <td align="center" valign="middle">{item.dtAuctionTimeStr} </td>
 
                                 <td align="center" valign="middle">
                                     { (item.status === 'A' || item.status === 'F') && (
