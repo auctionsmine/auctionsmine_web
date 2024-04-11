@@ -23,6 +23,7 @@ function AuctionList(){
     const [state, setState] = useState("");
 
     const [statusActive, setStatusActive] = useState(true);
+    const [statusPosponed, setStatusPosponed] = useState(true);
     const [statusCancel, setStatusCancel] = useState(true);
 
     const location = useLocation();
@@ -40,10 +41,13 @@ function AuctionList(){
         console.log('changeStatus: ' + id + ' - ' + value);
         if (id === 'checkActive'){
             setStatusActive(value);
-            consultarEPrecherTableFilter(value, statusCancel);
+            consultarEPrecherTableFilter(value, statusPosponed, statusCancel);
+        }else if (id === 'checkPosponed'){
+            setStatusPosponed(value);
+            consultarEPrecherTableFilter(statusActive, value, statusCancel);
         }else if (id === 'checkCancel'){
             setStatusCancel(value);
-            consultarEPrecherTableFilter(statusActive, value);
+            consultarEPrecherTableFilter(statusActive, statusPosponed, value);
         }
     }
 
@@ -93,7 +97,7 @@ function AuctionList(){
         auctionApi.getAllAuctions(setAuctionList);
     }
 
-    function consultarEPrecherTableFilter(status1, status2){
+    function consultarEPrecherTableFilter(statusA, statusP, statusC){
         var actionFilter = {};
         actionFilter.startDate = startDateStr;
         actionFilter.endDate = endDateStr;
@@ -101,13 +105,15 @@ function AuctionList(){
         actionFilter.city = city;
         actionFilter.state = state;
         actionFilter.statusList = [];
-        if (status1){
+        if (statusA){
             actionFilter.statusList.push('A');
             actionFilter.statusList.push('F');
         }
-        if (status2){
-            actionFilter.statusList.push('C');
+        if (statusP){
             actionFilter.statusList.push('P');
+        }
+        if (statusC){
+            actionFilter.statusList.push('C');
         }
         console.log(actionFilter);
 
@@ -189,6 +195,15 @@ function AuctionList(){
                                     onClick={changeStatus}
                                 />
                                 <Form.Check
+                                    checked={statusPosponed}
+                                    id="checkPosponed"
+                                    inline
+                                    className="form-select-sm fw-bold text-warning"
+                                    type="checkbox"
+                                    label="Posponed"
+                                    onClick={changeStatus}
+                                />
+                                <Form.Check
                                     checked={statusCancel}
                                     id="checkCancel"
                                     inline
@@ -228,7 +243,10 @@ function AuctionList(){
                                     { (item.status === 'A' || item.status === 'F') && (
                                         <div className="fw-bold text-success">{item.statusDescription}</div>
                                     )}
-                                    { (item.status === 'C' || item.status === 'P') && (
+                                    { (item.status === 'P') && (
+                                        <div className="fw-bold text-warning">{item.statusDescription}</div>
+                                    )}
+                                    { (item.status === 'C') && (
                                         <div className="fw-bold text-danger">{item.statusDescription}</div>
                                     )}
 
